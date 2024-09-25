@@ -40,9 +40,9 @@ class _LoginScreenState extends State<LoginScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             colors: [
-              Colors.orange.shade900,
-              Colors.orange.shade800,
-              Colors.orange.shade400
+              const Color.fromARGB(255, 13, 29, 209),
+              const Color.fromARGB(255, 4, 81, 236),
+              const Color.fromARGB(255, 9, 159, 228)
             ]
           )
         ),
@@ -55,9 +55,9 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  FadeInUp(duration: Duration(milliseconds: 1000), child: Text("Login", style: TextStyle(color: Colors.white, fontSize: 40),)),
+                  FadeInUp(duration: Duration(milliseconds: 1000), child: Text("Đăng nhập", style: TextStyle(color: Colors.white, fontSize: 40),)),
                   SizedBox(height: 10,),
-                  FadeInUp(duration: Duration(milliseconds: 1300), child: Text("Welcome Back", style: TextStyle(color: Colors.white, fontSize: 18),)),
+                  FadeInUp(duration: Duration(milliseconds: 1300), child: Text("Chào mừng trở lại", style: TextStyle(color: Colors.white, fontSize: 18),)),
                 ],
               ),
             ),
@@ -92,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 child: TextField(
                                   decoration: InputDecoration(
-                                    hintText: "Email or Phone number",
+                                    hintText: "Email",
                                     hintStyle: TextStyle(color: Colors.grey),
                                     border: InputBorder.none
                                   ),
@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: TextField(
                                   obscureText: true,
                                   decoration: InputDecoration(
-                                    hintText: "Password",
+                                    hintText: "Mật khẩu",
                                     hintStyle: TextStyle(color: Colors.grey),
                                     border: InputBorder.none
                                   ),
@@ -116,13 +116,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         )),
                         SizedBox(height: 40,),
-                        FadeInUp(duration: Duration(milliseconds: 1500), child: Text("Forgot Password?", style: TextStyle(color: Colors.grey),)),
+                        FadeInUp(duration: Duration(milliseconds: 1500), child: Text("Quên mật khẩu?", style: TextStyle(color: Colors.grey),)),
                         SizedBox(height: 40,),
                         FadeInUp(duration: Duration(milliseconds: 1600), child: MaterialButton(
                           onPressed: () {},
                           height: 50,
                           // margin: EdgeInsets.symmetric(horizontal: 50),
-                          color: Colors.orange[900],
+                          color: const Color.fromARGB(255, 3, 81, 250),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(50),
 
@@ -130,11 +130,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           // decoration: BoxDecoration(
                           // ),
                           child: Center(
-                            child: Text("Login", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                            child: Text("ĐĂNG NHẬP", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                           ),
                         )),
                         SizedBox(height: 50,),
-                        FadeInUp(duration: Duration(milliseconds: 1700), child: Text("Continue with social media", style: TextStyle(color: Colors.grey),)),
+                        FadeInUp(duration: Duration(milliseconds: 1700), child: Text("Đăng nhập với?", style: TextStyle(color: Colors.grey),)),
                         SizedBox(height: 30,),
                         Row(
                           children: <Widget>[
@@ -142,12 +142,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: FadeInUp(duration: Duration(milliseconds: 1800), child: MaterialButton(
                                 onPressed: (){},
                                 height: 50,
-                                color: Colors.blue,
+                                color: const Color.fromARGB(255, 240, 17, 17),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                                 child: Center(
-                                  child: Text("Facebook", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                                  child: Text("Google", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                                 ),
                               )),
                             ),
@@ -160,9 +160,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   borderRadius: BorderRadius.circular(50),
 
                                 ),
-                                color: Colors.black,
+                                color: const Color.fromARGB(255, 9, 40, 243),
                                 child: Center(
-                                  child: Text("Github", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                                  child: Text("Facebook", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                                 ),
                               )),
                             )

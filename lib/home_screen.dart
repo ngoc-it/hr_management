@@ -109,7 +109,7 @@ GestureDetector(
                 userWorkedWith(
                   "Vào ca",
                   "assets/user1.jpg",
-                  Colors.grey,
+                  const Color.fromARGB(255, 44, 9, 147),
                   "07:38",
                 ),
                 // userWorkedWith(

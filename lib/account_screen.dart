@@ -49,13 +49,13 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {},
-          icon: const Icon(Ionicons.chevron_back_outline),
-        ),
-        leadingWidth: 80,
-      ),
+      // appBar: AppBar(
+      //   leading: IconButton(
+      //     onPressed: () {},
+      //     icon: const Icon(Ionicons.chevron_back_outline),
+      //   ),
+      //   leadingWidth: 80,
+      // ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(30),
