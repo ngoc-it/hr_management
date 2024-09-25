@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:flutter_application_1/login_screen.dart';
 import 'package:flutter_application_1/worker_details_screen.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
@@ -44,41 +45,87 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  Container(                                   //Tạo một khung
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(                 //Trang trí khung vừa tạo (decor)
-                      borderRadius: BorderRadius.circular(15), //Bo góc 15px
-                      color: Colors.blueAccent,              //Đặt màu nền khung
-                      image: DecorationImage(                  //Gắn hình cho khung
-                        image: AssetImage("assets/user1.jpg"), //Gắn địa chỉ để lấy hình
-                        fit: BoxFit.cover,                     //Hình sẽ được chỉnh cho vừa với khung mà ko bị biến dạng
-                      ),
-                    ),
-                  ),
+GestureDetector(
+  onTap: () {
+    // Xử lý sự kiện khi người dùng nhấn vào nút
+    // Thay đổi trang sang trang đăng nhập ở đây
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()), // Chuyển đến trang đăng nhập
+    );
+  },
+  child: Container(
+    height: 50,
+    width: 50,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(15),
+      color: Colors.blueAccent,
+      image: DecorationImage(
+        image: AssetImage("assets/user1.jpg"),
+        fit: BoxFit.cover,
+      ),
+    ),
+  ),
+),
+
                 ],
               ),
               ),
-              SizedBox(height: 10),                            
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20), 
-                child: SizedBox(                               //Quy định kích thước của widget
-                  height: 40,                                  //Ở đây có thể thấy chiều cao đc qđ là 50px
-                  child: TextField(                            //Tạo ô nhập liệu văn bản
-                    decoration: InputDecoration(               
-                      enabled: false,                          //Chặn không cho nhập
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide.none,            //Không vẽ đường viền cho ô nhập
-                      ),
-                      prefixIcon: Icon(Feather.search,          //Đặt biểu tượng kính lúp phía trc ô nhập
-                     color: Colors.black,size: 30,),  
-                     fillColor: const Color.fromARGB(255, 233, 233, 233),             //Đặt màu nền cho ô nhập
-                     filled: true,                              //Đảm bảo màu nền được hiển thị (true)
-                    ),
-                  ),
+              // SizedBox(height: 10),                            
+              // Padding(
+              //   padding: EdgeInsets.symmetric(horizontal: 20), 
+              //   child: SizedBox(                               //Quy định kích thước của widget
+              //     height: 40,                                  //Ở đây có thể thấy chiều cao đc qđ là 50px
+              //     child: TextField(                            //Tạo ô nhập liệu văn bản
+              //       decoration: InputDecoration(               
+              //         enabled: false,                          //Chặn không cho nhập
+              //         border: OutlineInputBorder(
+              //           borderRadius: BorderRadius.circular(25),
+              //           borderSide: BorderSide.none,            //Không vẽ đường viền cho ô nhập
+              //         ),
+              //         prefixIcon: Icon(Feather.search,          //Đặt biểu tượng kính lúp phía trc ô nhập
+              //        color: Colors.black,size: 30,),  
+              //        fillColor: const Color.fromARGB(255, 233, 233, 233),             //Đặt màu nền cho ô nhập
+              //        filled: true,                              //Đảm bảo màu nền được hiển thị (true)
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              SizedBox(height: 20),
+             Padding(padding: EdgeInsets.symmetric(horizontal: 20),
+             child: Text("Lịch làm việc",
+             style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+             ),
+             ),
+             ),
+             SizedBox(height: 10),
+             ListView(
+              shrinkWrap: true,                                           //Với thuộc tính này Listview sẽ chỉ chiếm ko gian vừa đủ để hiển thị tát cả các phần tử của nó
+              physics: NeverScrollableScrollPhysics(),                    //Loại bỏ khả năng cuộn của listview, ko thể cuộn kể cả khi có nhiều phần tử hơn trong không gian có sẵn
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              children: [
+                userWorkedWith(
+                  "Vào ca",
+                  "assets/user1.jpg",
+                  Colors.grey,
+                  "07:38",
                 ),
-              ),
+                // userWorkedWith(
+                //   "Henry Jack",
+                //   "assets/user3.jpg",
+                //   Colors.grey,
+                //   "Developer",
+                // ),
+                // userWorkedWith(
+                //   "Harry Lu",
+                //   "assets/user4.jpg",
+                //   Colors.grey,
+                //   "HR Specialist",
+                // ),
+              ],
+             ),
               SizedBox(height: 20),
               Padding(padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text("Chức năng",                           //Tạo widget nội dung
@@ -162,41 +209,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
              ),
              ),
-             SizedBox(height: 20),
-             Padding(padding: EdgeInsets.symmetric(horizontal: 20),
-             child: Text("Đang làm việc cùng",
-             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-             ),
-             ),
-             ),
-             SizedBox(height: 10),
-             ListView(
-              shrinkWrap: true,                                           //Với thuộc tính này Listview sẽ chỉ chiếm ko gian vừa đủ để hiển thị tát cả các phần tử của nó
-              physics: NeverScrollableScrollPhysics(),                    //Loại bỏ khả năng cuộn của listview, ko thể cuộn kể cả khi có nhiều phần tử hơn trong không gian có sẵn
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              children: [
-                userWorkedWith(
-                  "Alex Hand",
-                  "assets/user2.jpg",
-                  Colors.grey,
-                  "Scrum Master",
-                ),
-                userWorkedWith(
-                  "Henry Jack",
-                  "assets/user3.jpg",
-                  Colors.grey,
-                  "Developer",
-                ),
-                userWorkedWith(
-                  "Harry Lu",
-                  "assets/user4.jpg",
-                  Colors.grey,
-                  "HR Specialist",
-                ),
-              ],
-             ),
             ],
           ),
         ),
@@ -211,11 +223,7 @@ Widget userWorkedWith(String name, String image, Color color, String jobTitle){ 
       Navigator.push(                                                                //Điều hướng đến màn hình WorkerDetailsScreen. Sử dụng Navigator.push để chuyển sang trang mới
           context,  
           MaterialPageRoute(
-          builder: (context) => WorkerDetailsScreen(
-          name: name,
-          image: image,
-          color: color,
-          jobTitle: jobTitle,
+          builder: (context) => ShiftSelectionScreen(
         ),
       ),);
     },

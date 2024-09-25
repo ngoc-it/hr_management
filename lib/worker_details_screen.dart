@@ -1,262 +1,188 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:ionicons/ionicons.dart';
 
-class WorkerDetailsScreen extends StatelessWidget {
-  final String name;
-  final String image;
-  final Color color;
-  final String jobTitle;
-
-  const WorkerDetailsScreen(
-    {super.key, 
-    required this.name, 
-    required this.image, 
-    required this.color, 
-    required this.jobTitle});
+class ShiftSelectionScreen extends StatelessWidget {
+  const ShiftSelectionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea
-    (child: Scaffold(
-        extendBodyBehindAppBar: true,
-        body: Container(
-          color: color.withOpacity(0.2),
-          child: Stack(
-            children: [
-            Stack(
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        title: Text('Chọn ca làm'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          Container(
+            color: Colors.blueAccent.withOpacity(0.1),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: 20,
-                          right: 20, 
-                          top: 20,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            InkWell(
-                              onTap: (){
-                                Navigator.pop(context);
-                              },
-                              child: Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Colors.white,
-                                ),
-                                child: Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.white,
-                              ),
-                              child: Icon(
-                                Icons.add,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
+                SizedBox(height: 50),
+                Container(
+                  
+                  margin: EdgeInsets.all(20),
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 5,
+                        offset: Offset(0, 5),
                       ),
-                      Center(
-                        child: Container(
-                          margin: EdgeInsets.only(top: 40),
-                          height: 100,
-                          width: 100,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.blueAccent,
-                            image: DecorationImage(
-                              image: AssetImage(image),
-                              fit: BoxFit.cover,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                spreadRadius: 0.1,
-                                blurRadius: 2,
-                                offset: Offset(0,5),
-                              ),
-                            ],
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Chấm công có thể không hoạt động khi quyền Vị trí hoặc chế độ Vị trí chính xác bị tắt.',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Handle permission button
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
                           ),
                         ),
+                        child: Text('Cấp phép'),
                       ),
-                      SizedBox(height: 20),
-                      Center(
-                        child: Text(name,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    children: [
+                      Icon(Icons.wifi, color: Colors.red),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Kết nối: wifi Không lấy được thông tin wifi hiện tại',
+                          style: TextStyle(color: Colors.red),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    'Bạn đang có 1 ca làm, chọn ca để Vào ca',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+                SizedBox(height: 20),
+                ShiftOption(
+                  title: 'Ca hành chính',
+                  time: '(08:00 - 17:30)',
+                  selected: true,
+                ),
+              ],
+            ),
+          ),
+          DraggableScrollableSheet(
+            initialChildSize: 0.2,
+            minChildSize: 0.2,
+            maxChildSize: 0.6,
+            builder: (context, scrollController) {
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                ),
+                child: ListView(
+                  controller: scrollController,
+                  children: [
                     Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Xử lý sự kiện xác nhận
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
                         child: Text(
-                          jobTitle,
-                          style: TextStyle(
-                          color: Colors.black54,
+                          'Xác nhận',
+                          style: TextStyle(fontSize: 16),
                         ),
                       ),
                     ),
                   ],
-                )
-              ],
-            ),
-            DraggableScrollableSheet(
-              initialChildSize: 0.65,
-              builder: (context, ScrollController){
-                return Container(
-                  padding: EdgeInsets.only(
-                    top: 40,
-                    left: 20,
-                    right: 20,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(50),
-
-                  ),
-                  child: ListView(
-                    controller: ScrollController,
-                    children: [
-                      Text("Thông tin",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          iconContainer(
-                            Colors.redAccent,
-                            Ionicons.heart,
-                            "lượt thích",
-                            43,
-                          ),
-                           iconContainer(
-                            Colors.deepPurpleAccent.withOpacity(0.5),
-                            AntDesign.like1,
-                            "cảm ơn",
-                            24,
-                          ),
-                           iconContainer(
-                            Colors.blue,
-                            Ionicons.ribbon,
-                            "tín nhiệm",
-                            50,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Text("Cập nhật",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      ),
-                      SizedBox(height: 15),
-                      lastUpdates(
-                        name,
-                        "Dự án",
-                        "Great job when meeting newcomers in the office yesterday. Im proud of him",
-                      ),
-                      SizedBox(height: 15),
-                       lastUpdates(
-                        name,
-                        "hhhhh",
-                        "took the extra efot to help me with my project last week. He's five star teamlead!",
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ],
+                ),
+              );
+            },
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class ShiftOption extends StatelessWidget {
+  final String title;
+  final String time;
+  final bool selected;
+
+  const ShiftOption(
+      {super.key,
+      required this.title,
+      required this.time,
+      required this.selected});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: selected ? Colors.blue : Colors.transparent,
         ),
       ),
-    );
-  }
-
-  Widget lastUpdates(String name, String title, String desc){
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.blueAccent.withOpacity(0.07),
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 10),
-             Text(
-              name + " " + desc,
-              style: TextStyle(
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ), 
-      ),
-    );
-  }
-
-  Widget iconContainer(Color color, IconData icon, String title, int number){
-    return Container(
-      width: 100,
-      height: 100,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.grey.withOpacity(0.2),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Row(
         children: [
-          Icon(icon,
-          color: color,
-          size: 40,),
-          SizedBox(
-            height: 10,
+          Radio(
+            value: true,
+            groupValue: selected,
+            onChanged: (value) {},
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-              number.toString(),
-              style: TextStyle(
-                fontSize: 14,
+                title,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
-              ),
-              SizedBox(width: 2),
               Text(
-              title,
-              style: TextStyle(
-                color: Colors.black54,
-              ),
+                time,
+                style: TextStyle(color: Colors.black54),
               ),
             ],
           ),
@@ -265,3 +191,5 @@ class WorkerDetailsScreen extends StatelessWidget {
     );
   }
 }
+
+

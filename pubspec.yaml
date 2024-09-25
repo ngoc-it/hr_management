@@ -39,6 +39,7 @@ dependencies:
   flutter_vector_icons: ^2.0.0
   get: ^4.6.6
   ionicons: ^0.2.2
+  animate_do: ^3.3.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

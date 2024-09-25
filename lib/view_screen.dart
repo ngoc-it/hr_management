@@ -41,6 +41,7 @@ class _ViewsState extends State<Views> {
                 HomeScreen(), // Trang HomeScreen ở đây
                 // Thêm các trang khác nếu có
                 AssignWorkPage(),
+                
                 AccountScreen(),
               ],
             ),
@@ -82,7 +83,7 @@ class _ViewsState extends State<Views> {
                       GestureDetector(
                         onTap: () => _onIconTap(2),
                         child: Icon(
-                          AntDesign.calendar,
+                          AntDesign.bells,
                           color: _selectedIndex == 2
                               ? Colors.blue
                               : Colors.black.withOpacity(0.7),

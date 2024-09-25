@@ -7,11 +7,17 @@ class AssignWorkPage extends StatefulWidget {
 
 class _AssignWorkPageState extends State<AssignWorkPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  int currentTab = 0; // Thêm biến để theo dõi tab hiện tại
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      setState(() {
+        currentTab = _tabController.index; // Cập nhật trạng thái tab hiện tại
+      });
+    });
   }
 
   @override
@@ -55,7 +61,12 @@ class _AssignWorkPageState extends State<AssignWorkPage> with SingleTickerProvid
         padding: const EdgeInsets.only(bottom: 40.0),
         child: FloatingActionButton(
           onPressed: () {
-            // Action for adding new task
+            // Action for adding new task or project
+            if (currentTab == 0) {
+              // Thực hiện hành động thêm cho tab "Việc của tôi"
+            } else {
+              // Thực hiện hành động thêm cho tab "Dự án"
+            }
           },
           child: Icon(Icons.add),
         ),
