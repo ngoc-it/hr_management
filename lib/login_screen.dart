@@ -12,12 +12,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  void _login() {
-    // Xử lý đăng nhập tại đây, ví dụ như kiểm tra thông tin nhập vào.
-    print('Email: ${emailController.text}');
-    print('Password: ${passwordController.text}');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

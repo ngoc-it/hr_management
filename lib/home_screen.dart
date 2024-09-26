@@ -142,28 +142,28 @@ GestureDetector(
               children: [
                 SizedBox(width: 20),                             //Tạo khoảng cách 20px theo chiều ngang
                 departmentCard(                                  //Hàm chi tiết cho DS phòng ban
-                  "Project MG",                                  //Tên phong ban
+                  "Nhân sự",                                  //Tên phong ban
                   2,                                             //Số lượng nv phòng ban
                   "Scrum Master",                                //Chức danh cv chính trong phòng ban
                   Colors.blueAccent,                           //Màu sắc đại diện
                   "📊",                                          //Biểu tượng đại diện
                 ),
                 departmentCard(
-                  "Development", 
+                  "Chấm công", 
                   5, 
                   "Developer", 
                   Colors.greenAccent, 
                   "🖥️",
                 ),
                 departmentCard(
-                  "UI/UX Design", 
+                  "Xếp ca", 
                   2, 
                   "Designer", 
                   Colors.orangeAccent, 
                   "🖌️",
                 ),
                 departmentCard(
-                  "QA", 
+                  "Tính lương", 
                   3, 
                   "Test Engineer", 
                   Colors.redAccent, 
@@ -179,14 +179,14 @@ GestureDetector(
               children: [
                 SizedBox(width: 20),
                 departmentCard(
-                  "Accounting", 
+                  "Phân công", 
                   2, 
                   "Accountant", 
                   Colors.pinkAccent, 
                   "💵",
                 ),
                 departmentCard(
-                  "Sales", 
+                  "Tiến độ dự án", 
                   2, 
                   "Sales Manager", 
                   Colors.yellowAccent, 
