@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/home_screen.dart';
+import 'package:flutter_application_1/view/home_screen.dart';
 
 class NotificationScreen extends StatelessWidget {
   final List<NotificationItem> notifications = [

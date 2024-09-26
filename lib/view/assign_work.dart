@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/view/add_project_screen.dart';
+import 'package:flutter_application_1/view/add_task_screen.dart'; // Thêm import nếu bạn có màn hình thêm công việc
 
 class AssignWorkPage extends StatefulWidget {
   @override
@@ -7,7 +9,7 @@ class AssignWorkPage extends StatefulWidget {
 
 class _AssignWorkPageState extends State<AssignWorkPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int currentTab = 0; // Thêm biến để theo dõi tab hiện tại
+  int currentTab = 0; // Biến theo dõi tab hiện tại
 
   @override
   void initState() {
@@ -61,11 +63,19 @@ class _AssignWorkPageState extends State<AssignWorkPage> with SingleTickerProvid
         padding: const EdgeInsets.only(bottom: 40.0),
         child: FloatingActionButton(
           onPressed: () {
-            // Action for adding new task or project
+            // Kiểm tra tab hiện tại và điều hướng đúng
             if (currentTab == 0) {
-              // Thực hiện hành động thêm cho tab "Việc của tôi"
+              // Nếu tab hiện tại là "Việc của tôi", điều hướng đến trang thêm công việc
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddTaskScreen()), 
+              );
             } else {
-              // Thực hiện hành động thêm cho tab "Dự án"
+              // Nếu tab hiện tại là "Dự án", điều hướng đến trang thêm dự án
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddProjectScreen()), 
+              );
             }
           },
           child: Icon(Icons.add),
@@ -75,6 +85,7 @@ class _AssignWorkPageState extends State<AssignWorkPage> with SingleTickerProvid
   }
 }
 
+// Trang danh sách công việc (Tab "Việc của tôi")
 class TaskListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -94,7 +105,7 @@ class TaskListView extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10),
-            // Sử dụng ExpansionTile cho "Mới giao"
+            // Sử dụng ExpansionTile cho danh sách công việc
             ExpansionTile(
               title: Text(
                 'Danh sách công việc',
@@ -108,7 +119,7 @@ class TaskListView extends StatelessWidget {
                 TaskItem(taskName: 'App đồ ăn', dueDate: '02 Th.10'),
               ],
             ),
-            // Các ExpansionTile khác ở đây...
+            // Có thể thêm các ExpansionTile khác ở đây...
           ],
         ),
       ),
@@ -116,6 +127,7 @@ class TaskListView extends StatelessWidget {
   }
 }
 
+// Trang danh sách dự án (Tab "Dự án")
 class ProjectListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -135,7 +147,7 @@ class ProjectListView extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10),
-            // Sử dụng ExpansionTile cho các dự án
+            // Sử dụng ExpansionTile cho danh sách dự án
             ExpansionTile(
               title: Text(
                 'Danh sách dự án',
@@ -149,7 +161,7 @@ class ProjectListView extends StatelessWidget {
                 TaskItem(taskName: 'Dự án B', dueDate: '02 Th.10'),
               ],
             ),
-            // Các ExpansionTile cho dự án khác ở đây...
+            // Có thể thêm các ExpansionTile khác ở đây...
           ],
         ),
       ),
@@ -157,6 +169,7 @@ class ProjectListView extends StatelessWidget {
   }
 }
 
+// Widget cho các mục công việc hoặc dự án
 class TaskItem extends StatelessWidget {
   final String taskName;
   final String dueDate;

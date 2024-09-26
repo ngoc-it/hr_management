@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/home_screen.dart';
-import 'package:flutter_application_1/account_screen.dart';
-import 'package:flutter_application_1/assign_work.dart';
-import 'package:flutter_application_1/notification_screen.dart';
+import 'package:flutter_application_1/view/home_screen.dart';
+import 'package:flutter_application_1/view/account_screen.dart';
+import 'package:flutter_application_1/view/assign_work.dart';
+import 'package:flutter_application_1/view/notification_screen.dart';
 
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 

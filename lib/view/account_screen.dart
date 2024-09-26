@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/edit_screen.dart';
+import 'package:flutter_application_1/view/edit_screen.dart';
 import 'package:flutter_application_1/widget_profile/forward_button.dart';
 import 'package:flutter_application_1/widget_profile/setting_item.dart';
 import 'package:flutter_application_1/widget_profile/setting_switch.dart';
