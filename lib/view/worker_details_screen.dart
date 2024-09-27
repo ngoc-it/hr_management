@@ -56,12 +56,13 @@ class ShiftSelectionScreen extends StatelessWidget {
                           // Handle permission button
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                          backgroundColor: const Color.fromARGB(255, 231, 241, 54),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
                         ),
                         child: Text('Cấp phép'),
+                        
                       ),
                     ],
                   ),
@@ -118,7 +119,7 @@ class ShiftSelectionScreen extends StatelessWidget {
                           // Xử lý sự kiện xác nhận
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                          backgroundColor: const Color.fromARGB(255, 231, 241, 54),
                           padding:
                               EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                           shape: RoundedRectangleBorder(

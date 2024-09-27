@@ -258,7 +258,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Center(
                   child: Text(
                     emoji,
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: 24),
                   ),
                 ),
               ),
