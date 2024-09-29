@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import 'package:flutter_application_1/view/login_screen.dart';
 import 'package:flutter_application_1/view/worker_details_screen.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:intl/intl.dart'; // Import thư viện để định dạng ngày
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,6 +12,33 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Danh sách các ngày trong tuần
+  final List<String> weekDays = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+
+  // Lấy ngày hôm nay
+  DateTime today = DateTime.now();
+  late List<Map<String, String>> days; // Biến lưu trữ danh sách ngày
+
+  @override
+  void initState() {
+    super.initState();
+    // Gọi hàm getDaysOfWeek để khởi tạo danh sách ngày
+    days = getDaysOfWeek();
+  }
+
+  // Tạo danh sách chứa các ngày trong tuần, bắt đầu từ ngày hôm nay
+  List<Map<String, String>> getDaysOfWeek() {
+    List<Map<String, String>> days = [];
+    for (int i = 0; i < 7; i++) {
+      DateTime date = today.add(Duration(days: i));
+      String day = weekDays[date.weekday % 7]; // Lấy tên ngày trong tuần
+      days.add({'day': day, 'date': DateFormat('dd').format(date)});
+    }
+    return days;
+  }
+
+  int selectedIndex = 0; // Biến lưu trữ ngày được chọn, mặc định là ngày hôm nay
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,29 +53,32 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Buổi sáng",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                      "Hôm nay",
+                      style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                  ),
+                  ),
+                    SizedBox(height: 5),
+                    Text(
+                    // Hiển thị ngày hiện tại với định dạng ngày/tháng/năm
+                    DateFormat('dd/MM/yyyy').format(DateTime.now()),
+                    style: TextStyle(
+                    color: Colors.black45,
                         ),
-                        SizedBox(height: 5),
-                        Text(
-                          "Ngày 24/09/2024",
-                          style: TextStyle(
-                            color: Colors.black45,
-                          ),
-                        ),
-                      ],
+                      ),
+                     ],
                     ),
+
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => LoginScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()),
                         );
                       },
                       child: Container(
@@ -75,6 +106,59 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
+                ),
+              ),
+              SizedBox(height: 10),
+              // Hiển thị danh sách lịch làm việc
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(days.length, (index) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedIndex = index; // Cập nhật ngày được chọn
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: selectedIndex == index
+                              ? Colors.green.withOpacity(0.2)
+                              : Colors.grey.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: selectedIndex == index
+                                ? Colors.green
+                                : Colors.transparent,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              days[index]['day']!,
+                              style: TextStyle(
+                                color: selectedIndex == index
+                                    ? Colors.green
+                                    : Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              days[index]['date']!,
+                              style: TextStyle(
+                                color: selectedIndex == index
+                                    ? Colors.green
+                                    : Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
                 ),
               ),
               SizedBox(height: 10),
