@@ -3,7 +3,7 @@ import 'package:flutter_application_1/view/login_screen.dart';
 import 'package:flutter_application_1/view/worker_details_screen.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart'; // Import thư viện để định dạng ngày
-
+import 'package:flutter_application_1/view/NhanSu/hr_screen_home.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -198,11 +198,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisSpacing: 10, // Khoảng cách giữa các cột
                 children: [
                   departmentCard(
+                    
                     "Nhân sự",
                     2,
                     "Scrum Master",
                     Colors.blueAccent,
                     "📊",
+                    () {
+                    Navigator.push(
+                    context,
+                  MaterialPageRoute(builder: (context) => const HRScreenHome()),
+                   );
+                    },
                   ),
                   departmentCard(
                     "Chấm công",
@@ -210,13 +217,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     "Developer",
                     Colors.greenAccent,
                     "🖥️",
+                    () {
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HRScreenHome()),
+                    );
+                    },
                   ),
                   departmentCard(
                     "Xếp ca",
                     2,
                     "Designer",
                     Colors.orangeAccent,
-                    "🖌️",
+                    "🖌️", 
+                    () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HRScreenHome()),
+      );
+    },
                   ),
                   departmentCard(
                     "Tính lương",
@@ -224,6 +243,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     "Test Engineer",
                     Colors.redAccent,
                     "🔎",
+                    () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HRScreenHome()),
+      );
+    },
                   ),
                   departmentCard(
                     "Phân công",
@@ -231,6 +256,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     "Accountant",
                     Colors.pinkAccent,
                     "💵",
+                    () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HRScreenHome()),
+      );
+    },
                   ),
                   departmentCard(
                     "Tiến độ dự án",
@@ -238,6 +269,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     "Sales Manager",
                     Colors.yellowAccent,
                     "📦",
+                    () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HRScreenHome()),
+      );
+    },
                   ),
                 ],
               ),
@@ -318,9 +355,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget departmentCard(String name, int number, String title, Color color, String emoji) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 10), // Thêm khoảng cách dưới mỗi card
+  Widget departmentCard(String name, int number, String title, Color color, String emoji, VoidCallback onTap) {
+  return Padding(
+    padding: EdgeInsets.only(bottom: 10), // Thêm khoảng cách dưới mỗi card
+    child: GestureDetector(
+      onTap: onTap, // Gọi hàm onTap khi người dùng nhấn vào card
       child: Container(
         decoration: BoxDecoration(
           color: color.withOpacity(0.3),
@@ -366,6 +405,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
