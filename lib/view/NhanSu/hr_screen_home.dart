@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/view/NhanSu/departments_list.dart';
-
+import 'package:flutter_application_1/view/NhanSu/personnel_mng_screen.dart';
+import 'package:flutter_application_1/view/NhanSu/hopdong_list.dart';
 class HRScreenHome extends StatelessWidget {
   const HRScreenHome({super.key});
 
@@ -38,6 +39,10 @@ class HRScreenHome extends StatelessWidget {
               Colors.green,
               () {
                 // Điều hướng đến trang quản lý nhân viên
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EmployeeManagementScreen()), // Không cần const ở đây
+                );
               },
             ),
             _buildOptionCard(
@@ -47,6 +52,10 @@ class HRScreenHome extends StatelessWidget {
               Colors.orange,
               () {
                 // Điều hướng đến trang quản lý hợp đồng
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ContractManagementScreen()), // Không cần const ở đây
+                );
               },
             ),
           ],

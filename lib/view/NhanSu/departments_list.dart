@@ -88,15 +88,15 @@ class DepartmentsList extends StatelessWidget {
   }
 }
 
-class AddDepartmentScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Thêm phòng ban')),
-      body: Center(child: const Text('Form thêm phòng ban sẽ được đặt ở đây')),
-    );
-  }
-}
+// class AddDepartmentScreen extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text('Thêm phòng ban')),
+//       body: Center(child: const Text('Form thêm phòng ban sẽ được đặt ở đây')),
+//     );
+//   }
+// }
 
 class DepartmentDetailScreen extends StatelessWidget {
   final String department;
