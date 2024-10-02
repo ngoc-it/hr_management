@@ -12,7 +12,7 @@ class ManagerShiftScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Quản Lý Xếp Ca: ${caLamViec.ca}'),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.orangeAccent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),

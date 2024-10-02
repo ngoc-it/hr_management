@@ -9,7 +9,7 @@ class SalaryCalculationScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Tính Lương'),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.redAccent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),

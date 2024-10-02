@@ -21,7 +21,7 @@ class TimekeepingScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Chấm Công'),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.greenAccent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -99,7 +99,7 @@ class TimekeepingScreen extends StatelessWidget {
                   // Xử lý sự kiện chấm công
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
+                  backgroundColor: Colors.greenAccent,
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   textStyle: TextStyle(fontSize: 18),
                 ),

@@ -17,7 +17,7 @@ class XepCaNhanVienScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Chọn Ca Làm Việc'),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.orangeAccent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
