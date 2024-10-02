@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ContractManagementScreen extends StatefulWidget {
   @override
@@ -36,11 +37,23 @@ class _ContractManagementScreenState extends State<ContractManagementScreen> {
     String contractId = contract?.id ?? '';
     String employeeId = contract?.employeeId ?? '';
     String contractType = contract?.type ?? '';
-    String startDate = contract?.startDate ?? '';
-    String endDate = contract?.endDate ?? '';
+    DateTime? startDate = contract != null ? DateTime.parse(contract.startDate) : null;
+    DateTime? endDate = contract != null ? DateTime.parse(contract.endDate) : null;
     String basicSalary = contract?.basicSalary ?? '';
     String status = contract?.status ?? '';
     String notes = contract?.notes ?? '';
+
+    Future<void> _selectDate(BuildContext context, DateTime? initialDate, ValueChanged<DateTime?> onDateSelected) async {
+      final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: initialDate ?? DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100),
+      );
+      if (picked != null && picked != initialDate) {
+        onDateSelected(picked);
+      }
+    }
 
     showDialog(
       context: context,
@@ -71,16 +84,28 @@ class _ContractManagementScreenState extends State<ContractManagementScreen> {
                   onChanged: (value) => contractType = value,
                 ),
                 TextFormField(
-                  initialValue: startDate,
+                  readOnly: true,
                   decoration: InputDecoration(labelText: 'Ngày bắt đầu'),
-                  validator: (value) => value!.isEmpty ? 'Vui lòng nhập ngày bắt đầu' : null,
-                  onChanged: (value) => startDate = value,
+                  controller: TextEditingController(
+                    text: startDate != null ? DateFormat('dd/MM/yyyy').format(startDate!) : '',
+                  ),
+                  onTap: () => _selectDate(context, startDate, (newDate) {
+                    setState(() {
+                      startDate = newDate;
+                    });
+                  }),
                 ),
                 TextFormField(
-                  initialValue: endDate,
+                  readOnly: true,
                   decoration: InputDecoration(labelText: 'Ngày kết thúc'),
-                  validator: (value) => value!.isEmpty ? 'Vui lòng nhập ngày kết thúc' : null,
-                  onChanged: (value) => endDate = value,
+                  controller: TextEditingController(
+                    text: endDate != null ? DateFormat('dd/MM/yyyy').format(endDate!) : '',
+                  ),
+                  onTap: () => _selectDate(context, endDate, (newDate) {
+                    setState(() {
+                      endDate = newDate;
+                    });
+                  }),
                 ),
                 TextFormField(
                   initialValue: basicSalary,
@@ -110,8 +135,8 @@ class _ContractManagementScreenState extends State<ContractManagementScreen> {
                     id: contractId,
                     employeeId: employeeId,
                     type: contractType,
-                    startDate: startDate,
-                    endDate: endDate,
+                    startDate: DateFormat('yyyy-MM-dd').format(startDate!),
+                    endDate: DateFormat('yyyy-MM-dd').format(endDate!),
                     basicSalary: basicSalary,
                     status: status,
                     notes: notes,

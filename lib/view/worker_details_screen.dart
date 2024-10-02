@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ShiftSelectionScreen extends StatelessWidget {
   const ShiftSelectionScreen({super.key});
@@ -29,7 +31,6 @@ class ShiftSelectionScreen extends StatelessWidget {
               children: [
                 SizedBox(height: 50),
                 Container(
-                  
                   margin: EdgeInsets.all(20),
                   padding: EdgeInsets.all(15),
                   decoration: BoxDecoration(
@@ -52,8 +53,25 @@ class ShiftSelectionScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 10),
                       ElevatedButton(
-                        onPressed: () {
-                          // Handle permission button
+                        onPressed: () async {
+                          // Kiểm tra và yêu cầu quyền truy cập vị trí
+                          var status = await Permission.location.request();
+                          if (status.isGranted) {
+                            // Hiện bản đồ khi nhấn nút cấp phép
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MapScreen(),
+                              ),
+                            );
+                          } else {
+                            // Hiển thị thông báo nếu quyền không được cấp
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Quyền truy cập vị trí bị từ chối.'),
+                              ),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(255, 231, 241, 54),
@@ -62,7 +80,6 @@ class ShiftSelectionScreen extends StatelessWidget {
                           ),
                         ),
                         child: Text('Cấp phép'),
-                        
                       ),
                     ],
                   ),
@@ -143,6 +160,35 @@ class ShiftSelectionScreen extends StatelessWidget {
   }
 }
 
+class MapScreen extends StatelessWidget {
+  const MapScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Bản đồ'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+      body: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: LatLng(10.7769, 106.6951), // Đặt tọa độ bạn muốn hiển thị
+          zoom: 14,
+        ),
+        myLocationEnabled: true, // Kích hoạt hiện vị trí của người dùng
+        myLocationButtonEnabled: true, // Kích hoạt nút hiện vị trí
+      ),
+    );
+  }
+}
+
 class ShiftOption extends StatelessWidget {
   final String title;
   final String time;
@@ -192,5 +238,3 @@ class ShiftOption extends StatelessWidget {
     );
   }
 }
-
-

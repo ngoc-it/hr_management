@@ -1,9 +1,15 @@
+import 'dart:async'; // Import thư viện để sử dụng Timer
 import "package:flutter/material.dart";
+import 'package:flutter_application_1/view/ChamCong/timekeeping_creen.dart';
+import 'package:flutter_application_1/view/TinhLuong/salary_calculation_screen.dart';
+import 'package:flutter_application_1/view/XepCa/xepca_nhanvien.dart';
 import 'package:flutter_application_1/view/login_screen.dart';
+import 'package:flutter_application_1/view/NhanSu/hr_screen_home.dart';
 import 'package:flutter_application_1/view/worker_details_screen.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:flutter_application_1/view/PhanCong/Assignment_screen.dart';
 import 'package:intl/intl.dart'; // Import thư viện để định dạng ngày
-import 'package:flutter_application_1/view/NhanSu/hr_screen_home.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -12,18 +18,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // Danh sách các ngày trong tuần
   final List<String> weekDays = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
-
-  // Lấy ngày hôm nay
   DateTime today = DateTime.now();
-  late List<Map<String, String>> days; // Biến lưu trữ danh sách ngày
+  late List<Map<String, String>> days;
+
+  String currentTime = ''; // Biến lưu trữ giờ hiện tại
+  Timer? timer; // Khai báo Timer
 
   @override
   void initState() {
     super.initState();
-    // Gọi hàm getDaysOfWeek để khởi tạo danh sách ngày
     days = getDaysOfWeek();
+    updateTime();
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) => updateTime());
   }
 
   // Tạo danh sách chứa các ngày trong tuần, bắt đầu từ ngày hôm nay
@@ -35,6 +42,19 @@ class _HomeScreenState extends State<HomeScreen> {
       days.add({'day': day, 'date': DateFormat('dd').format(date)});
     }
     return days;
+  }
+
+  // Hàm cập nhật giờ hiện tại
+  void updateTime() {
+    setState(() {
+      currentTime = DateFormat('HH:mm:ss').format(DateTime.now());
+    });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel(); // Hủy Timer khi không cần thiết
+    super.dispose();
   }
 
   int selectedIndex = 0; // Biến lưu trữ ngày được chọn, mặc định là ngày hôm nay
@@ -53,26 +73,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                      "Hôm nay",
-                      style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                  ),
-                  ),
-                    SizedBox(height: 5),
-                    Text(
-                    // Hiển thị ngày hiện tại với định dạng ngày/tháng/năm
-                    DateFormat('dd/MM/yyyy').format(DateTime.now()),
-                    style: TextStyle(
-                    color: Colors.black45,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Hôm nay",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                     ],
+                        SizedBox(height: 5),
+                        Text(
+                          DateFormat('dd/MM/yyyy').format(DateTime.now()),
+                          style: TextStyle(
+                            color: Colors.black45,
+                          ),
+                        ),
+                      ],
                     ),
-
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -171,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     "Vào ca",
                     "assets/user1.jpg",
                     const Color.fromARGB(255, 44, 9, 147),
-                    "07:38",
+                    currentTime, // Hiển thị giờ hiện tại
                   ),
                 ],
               ),
@@ -187,97 +205,91 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               SizedBox(height: 10),
-              // Sử dụng GridView để hiển thị 2 card chức năng trên mỗi hàng
-              GridView.count(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                crossAxisCount: 2, // Hai cột
-                childAspectRatio: 1, // Tỉ lệ chiều rộng và chiều cao
-                mainAxisSpacing: 10, // Khoảng cách giữa các hàng
-                crossAxisSpacing: 10, // Khoảng cách giữa các cột
-                children: [
-                  departmentCard(
-                    
-                    "Nhân sự",
-                    2,
-                    "Scrum Master",
-                    Colors.blueAccent,
-                    "📊",
-                    () {
-                    Navigator.push(
-                    context,
-                  MaterialPageRoute(builder: (context) => const HRScreenHome()),
-                   );
-                    },
-                  ),
-                  departmentCard(
-                    "Chấm công",
-                    5,
-                    "Developer",
-                    Colors.greenAccent,
-                    "🖥️",
-                    () {
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const HRScreenHome()),
-                    );
-                    },
-                  ),
-                  departmentCard(
-                    "Xếp ca",
-                    2,
-                    "Designer",
-                    Colors.orangeAccent,
-                    "🖌️", 
-                    () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const HRScreenHome()),
-      );
-    },
-                  ),
-                  departmentCard(
-                    "Tính lương",
-                    3,
-                    "Test Engineer",
-                    Colors.redAccent,
-                    "🔎",
-                    () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const HRScreenHome()),
-      );
-    },
-                  ),
-                  departmentCard(
-                    "Phân công",
-                    2,
-                    "Accountant",
-                    Colors.pinkAccent,
-                    "💵",
-                    () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const HRScreenHome()),
-      );
-    },
-                  ),
-                  departmentCard(
-                    "Tiến độ dự án",
-                    2,
-                    "Sales Manager",
-                    Colors.yellowAccent,
-                    "📦",
-                    () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const HRScreenHome()),
-      );
-    },
-                  ),
-                ],
-              ),
+             GridView.count(
+  shrinkWrap: true,
+  physics: NeverScrollableScrollPhysics(),
+  padding: EdgeInsets.symmetric(horizontal: 20),
+  crossAxisCount: 2,
+  childAspectRatio: 1,
+  mainAxisSpacing: 10,
+  crossAxisSpacing: 10,
+  children: [
+    departmentCard(
+      "Nhân sự",
+      Colors.blueAccent,
+      "🧑‍💼", // Icon cho nhân sự
+      () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const HRScreenHome()),
+        );
+      },
+    ),
+    departmentCard(
+      "Chấm công",
+      Colors.greenAccent,
+      "🕒", // Icon cho chấm công
+      () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const TimekeepingScreen()),
+        );
+      },
+    ),
+    departmentCard(
+      "Xếp ca",
+      Colors.orangeAccent,
+      "📅", // Icon cho xếp ca
+      () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const XepCaNhanVienScreen()),
+        );
+      },
+    ),
+    departmentCard(
+      "Tính lương",
+      Colors.redAccent,
+      "💰", // Icon cho tính lương
+      () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const SalaryCalculationScreen()),
+        );
+      },
+    ),
+    departmentCard(
+      "Phân công",
+      Colors.pinkAccent,
+      "📝", // Icon cho phân công
+      () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AssignWorkPage()),
+        );
+      },
+    ),
+    departmentCard(
+      "Tiến độ dự án",
+      Colors.yellowAccent,
+      "📈", // Icon cho tiến độ dự án
+      () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const HRScreenHome()),
+        );
+      },
+    ),
+  ],
+),
+
+
             ],
           ),
         ),
@@ -285,95 +297,88 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget userWorkedWith(String name, String image, Color color, String jobTitle) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 10),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ShiftSelectionScreen(),
-            ),
-          );
-        },
-        child: Container(
-          width: double.infinity,
-          height: 70,
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(20),
+ Widget userWorkedWith(
+  String name, String image, Color color, String jobTitle) {
+  return Padding(
+    padding: EdgeInsets.only(bottom: 10),
+    child: InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ShiftSelectionScreen(), // Chuyển hướng tới WorkerDetailsScreen
           ),
-          child: Center(
-            child: ListTile(
-              leading: Container(
-                height: 45,
-                width: 45,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.blueAccent,
-                  image: DecorationImage(
-                    image: AssetImage(image),
-                    fit: BoxFit.cover,
-                  ),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        height: 70,
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Center(
+          child: ListTile(
+            leading: Container(
+              height: 45,
+              width: 45,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.blueAccent,
+                image: DecorationImage(
+                  image: AssetImage(image),
+                  fit: BoxFit.cover,
                 ),
               ),
-              title: Text(
-                name,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
+            ),
+            title: Text(
+              name,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
               ),
-              subtitle: Text(
-                jobTitle,
-                style: TextStyle(
-                  color: Colors.black54,
-                ),
+            ),
+            subtitle: Text(
+              jobTitle,
+              style: TextStyle(
+                color: Colors.black54,
               ),
-              trailing: Container(
-                height: 25,
-                width: 25,
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(4),
-                  child: Center(
-                    child: Icon(
-                      FontAwesome5Regular.edit,
-                      size: 18,
-                    ),
-                  ),
-                ),
+            ),
+            trailing: Container(
+              height: 35,
+              width: 35,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.grey.withOpacity(0.3),
               ),
+              child: Icon(Ionicons.chevron_forward),
             ),
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 
-  Widget departmentCard(String name, int number, String title, Color color, String emoji, VoidCallback onTap) {
+  Widget departmentCard(String name, Color color, String emoji, VoidCallback onTap) {
   return Padding(
-    padding: EdgeInsets.only(bottom: 10), // Thêm khoảng cách dưới mỗi card
+    padding: EdgeInsets.only(bottom: 10),
     child: GestureDetector(
-      onTap: onTap, // Gọi hàm onTap khi người dùng nhấn vào card
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           color: color.withOpacity(0.3),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(
-          padding: EdgeInsets.all(15),
+          padding: EdgeInsets.all(20), // Tăng padding để có khoảng trống
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center, // Căn giữa theo chiều ngang
             children: [
               Container(
-                height: 30,
-                width: 30,
+                height: 50, // Tăng kích thước chiều cao
+                width: 50,  // Tăng kích thước chiều rộng
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(10),
@@ -381,25 +386,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Center(
                   child: Text(
                     emoji,
-                    style: TextStyle(fontSize: 24),
+                    style: TextStyle(fontSize: 40), // Tăng kích thước biểu tượng
                   ),
                 ),
               ),
-              SizedBox(height: 8), // Thay đổi khoảng cách giữa emoji và tên
+              SizedBox(height: 10), // Tăng khoảng cách giữa biểu tượng và tên
               Text(
                 name,
                 style: TextStyle(
-                  fontSize: 18, // Tăng kích thước chữ
+                  fontSize: 20, // Tăng kích thước chữ
                   fontWeight: FontWeight.bold,
                 ),
-              ),
-              SizedBox(height: 4), // Thay đổi khoảng cách giữa tên và tiêu đề
-              Text(
-                "$number $title",
-                style: TextStyle(
-                  fontSize: 16, // Tăng kích thước chữ
-                  color: Colors.black54,
-                ),
+                textAlign: TextAlign.center, // Căn giữa tên
               ),
             ],
           ),
