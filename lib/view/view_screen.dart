@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/view/PhanCong/Assignment_screen.dart';
 import 'package:flutter_application_1/view/home_screen.dart';
 import 'package:flutter_application_1/view/account_screen.dart';
-import 'package:flutter_application_1/view/assign_work.dart';
+import 'package:flutter_application_1/view/CongViecPhanCong/assign_work.dart';
 import 'package:flutter_application_1/view/notification_screen.dart';
-
+import 'package:flutter_application_1/components/nav_bar.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 class Views extends StatefulWidget {

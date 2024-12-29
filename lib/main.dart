@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/view/login_screen.dart';
 import 'package:flutter_application_1/view/view_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_application_1/components/nav_bar.dart';
+import 'package:flutter_application_1/components/calendar_page.dart';
+import 'package:flutter_application_1/components/human_resources.dart';
+import 'package:flutter_application_1/components/recruit_page.dart';
 
 
 void main() {
@@ -21,7 +26,7 @@ class MyApp extends StatelessWidget {
         fontFamily: GoogleFonts.montserrat().fontFamily,
         primarySwatch: Colors.blue,
       ),
-      home: Views(),
+      home: LoginScreen(),
     );
   }
 }

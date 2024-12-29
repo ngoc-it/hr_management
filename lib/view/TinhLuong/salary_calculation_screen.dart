@@ -1,83 +1,112 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/components/TinhLuong/TinhLuong_model.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
-class SalaryCalculationScreen extends StatelessWidget {
-  const SalaryCalculationScreen({Key? key}) : super(key: key);
+class ListTinhLuongScreen extends StatefulWidget {
+  @override
+  _ListTinhLuongScreenState createState() => _ListTinhLuongScreenState();
+}
+
+class _ListTinhLuongScreenState extends State<ListTinhLuongScreen> {
+  late Future<List<TinhLuong>> _attendanceList;
+  int? loggedInNhanVienID;
+
+  @override
+  void initState() {
+    super.initState();
+    _getLoggedInNhanVienID();  // Lấy NhanVienID của người dùng đăng nhập
+  }
+
+  // Lấy NhanVienID từ SharedPreferences
+  Future<void> _getLoggedInNhanVienID() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      loggedInNhanVienID = prefs.getInt('NhanVienID');
+    });
+
+    // Khi đã lấy được NhanVienID, thực hiện tải dữ liệu chấm công
+    if (loggedInNhanVienID != null) {
+      _attendanceList = _fetchAttendanceByNhanVien(loggedInNhanVienID!);
+    }
+  }
+
+  Future<List<TinhLuong>> _fetchAttendanceByNhanVien(int nhanVienId) async {
+  final url = Uri.parse('http://192.168.239.219:5000/api/TinhLuongs/NhanVien/$nhanVienId');
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    final List data = jsonDecode(response.body);
+    return data.map((item) => TinhLuong.fromJson(item)).toList();
+  } else {
+    throw Exception('Không thể lấy dữ liệu chấm công');
+  }
+}
+
+
+
+  // Hàm hỗ trợ để định dạng ngày
+  String formatDate(DateTime? date) {
+    return date != null ? DateFormat('dd/MM/yyyy HH:mm').format(date) : '--';
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tính Lương'),
-        centerTitle: true,
+        title: Text('Lương của tôi'),
         backgroundColor: Colors.redAccent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Thông tin nhân viên
-            Text(
-              'Thông tin nhân viên',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Card(
-              elevation: 5,
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Họ và Tên: Nguyễn Văn A', style: TextStyle(fontSize: 16)),
-                    Text('Chức vụ: Nhân viên', style: TextStyle(fontSize: 16)),
-                    Text('Phòng Ban: Phòng Kỹ Thuật', style: TextStyle(fontSize: 16)),
-                    Text('Lương Cơ Bản: 5,000,000 VNĐ', style: TextStyle(fontSize: 16)),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-
-            // Thông tin tính lương
-            Text(
-              'Thông tin tính lương',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Card(
-              elevation: 5,
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Số Ngày Làm: 22', style: TextStyle(fontSize: 16)),
-                    Text('Số Giờ Tăng Ca: 10', style: TextStyle(fontSize: 16)),
-                    Text('Tổng Lương: 7,000,000 VNĐ', style: TextStyle(fontSize: 16)), // Có thể tính toán sau
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-
-            // Nút tính lương
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Xử lý sự kiện tính lương
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  textStyle: TextStyle(fontSize: 18),
-                ),
-                child: Text('Tính Lương'),
-              ),
-            ),
-          ],
-        ),
-      ),
+      body: loggedInNhanVienID == null
+        ? Center(child: CircularProgressIndicator())  // Hiển thị khi chưa lấy được NhanVienID
+        : FutureBuilder<List<TinhLuong>>(
+            future: _attendanceList,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Lỗi khi lấy dữ liệu'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(child: Text('Không có dữ liệu chấm công'));
+              } else {
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    final attendance = snapshot.data![index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: ListTile(
+                        title: Text('Ngày: ${DateFormat('dd/MM/yyyy').format(attendance.thangNam)}'),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Tên lương: ${attendance.tenTinhLuong}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 8),
+            Text('Lương thực nhận: ${attendance.luongThucNhan.toStringAsFixed(2)}', style: TextStyle(fontSize: 16)),
+            SizedBox(height: 8),
+            Text('Tháng năm: ${attendance.thangNam.toLocal()}'.split(' ')[0], style: TextStyle(fontSize: 16)),
+            SizedBox(height: 8),
+            Text('Nhân viên ID: ${attendance.nhanVienId}', style: TextStyle(fontSize: 16)),
+            Text('Hợp đồng ID: ${attendance.hopDongId}', style: TextStyle(fontSize: 16)),
+            SizedBox(height: 16),
+            Text('Thưởng: ${attendance.thuongIds.join(", ")}', style: TextStyle(fontSize: 16)),
+            Text('Phạt: ${attendance.phatIds.join(", ")}', style: TextStyle(fontSize: 16)),
+            SizedBox(height: 16),
+            Text('Số ngày công: ${attendance.soNgayCong}', style: TextStyle(fontSize: 16)),
+            Text('Số ngày nghỉ có phép: ${attendance.soNgayNghiCoPhep}', style: TextStyle(fontSize: 16)),
+            Text('Số ngày nghỉ không phép: ${attendance.soNgayNghiKhongPhep}', style: TextStyle(fontSize: 16)),
+                            
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }
+            },
+          ),
     );
   }
 }

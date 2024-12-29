@@ -29,6 +29,9 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
+    
+
+
 
     buildTypes {
         release {
@@ -41,4 +44,8 @@ android {
 
 flutter {
     source = "../.."
+}
+dependencies {
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'  // Version updated to the latest Maps version
+    implementation 'com.google.android.gms:play-services-location:21.3.0'  // Version updated to the latest Location version
 }

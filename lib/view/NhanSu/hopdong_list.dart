@@ -1,260 +1,102 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/components/HopDong/hopdong_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
-class ContractManagementScreen extends StatefulWidget {
+class ListHopDongScreen extends StatefulWidget {
   @override
-  _ContractManagementScreenState createState() => _ContractManagementScreenState();
+  _ListHopDongScreenState createState() => _ListHopDongScreenState();
 }
 
-class _ContractManagementScreenState extends State<ContractManagementScreen> {
-  List<Contract> contracts = []; // Danh sách hợp đồng
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+class _ListHopDongScreenState extends State<ListHopDongScreen> {
+  late Future<List<HopDong>> _attendanceList;
+  int? loggedInNhanVienID;
 
-  // Hàm thêm hợp đồng
-  void _addContract(Contract contract) {
-    setState(() {
-      contracts.add(contract);
-    });
+  @override
+  void initState() {
+    super.initState();
+    _getLoggedInNhanVienID();  // Lấy NhanVienID của người dùng đăng nhập
   }
 
-  // Hàm sửa hợp đồng
-  void _editContract(int index, Contract updatedContract) {
+  // Lấy NhanVienID từ SharedPreferences
+  Future<void> _getLoggedInNhanVienID() async {
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      contracts[index] = updatedContract;
+      loggedInNhanVienID = prefs.getInt('NhanVienID');
     });
-  }
 
-  // Hàm xóa hợp đồng
-  void _deleteContract(int index) {
-    setState(() {
-      contracts.removeAt(index);
-    });
-  }
-
-  // Hàm hiển thị hộp thoại thêm/sửa hợp đồng
-  void _showContractDialog({Contract? contract, int? index}) {
-    String title = contract != null ? 'Sửa Hợp Đồng' : 'Thêm Hợp Đồng';
-    String contractId = contract?.id ?? '';
-    String employeeId = contract?.employeeId ?? '';
-    String contractType = contract?.type ?? '';
-    DateTime? startDate = contract != null ? DateTime.parse(contract.startDate) : null;
-    DateTime? endDate = contract != null ? DateTime.parse(contract.endDate) : null;
-    String basicSalary = contract?.basicSalary ?? '';
-    String status = contract?.status ?? '';
-    String notes = contract?.notes ?? '';
-
-    Future<void> _selectDate(BuildContext context, DateTime? initialDate, ValueChanged<DateTime?> onDateSelected) async {
-      final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: initialDate ?? DateTime.now(),
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2100),
-      );
-      if (picked != null && picked != initialDate) {
-        onDateSelected(picked);
-      }
+    // Khi đã lấy được NhanVienID, thực hiện tải dữ liệu chấm công
+    if (loggedInNhanVienID != null) {
+      _attendanceList = _fetchAttendanceByNhanVien(loggedInNhanVienID!);
     }
+  }
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  initialValue: contractId,
-                  decoration: InputDecoration(labelText: 'ID hợp đồng'),
-                  validator: (value) => value!.isEmpty ? 'Vui lòng nhập ID hợp đồng' : null,
-                  onChanged: (value) => contractId = value,
-                ),
-                TextFormField(
-                  initialValue: employeeId,
-                  decoration: InputDecoration(labelText: 'ID Nhân viên'),
-                  validator: (value) => value!.isEmpty ? 'Vui lòng nhập ID nhân viên' : null,
-                  onChanged: (value) => employeeId = value,
-                ),
-                TextFormField(
-                  initialValue: contractType,
-                  decoration: InputDecoration(labelText: 'Loại Hợp Đồng'),
-                  validator: (value) => value!.isEmpty ? 'Vui lòng nhập loại hợp đồng' : null,
-                  onChanged: (value) => contractType = value,
-                ),
-                TextFormField(
-                  readOnly: true,
-                  decoration: InputDecoration(labelText: 'Ngày bắt đầu'),
-                  controller: TextEditingController(
-                    text: startDate != null ? DateFormat('dd/MM/yyyy').format(startDate!) : '',
-                  ),
-                  onTap: () => _selectDate(context, startDate, (newDate) {
-                    setState(() {
-                      startDate = newDate;
-                    });
-                  }),
-                ),
-                TextFormField(
-                  readOnly: true,
-                  decoration: InputDecoration(labelText: 'Ngày kết thúc'),
-                  controller: TextEditingController(
-                    text: endDate != null ? DateFormat('dd/MM/yyyy').format(endDate!) : '',
-                  ),
-                  onTap: () => _selectDate(context, endDate, (newDate) {
-                    setState(() {
-                      endDate = newDate;
-                    });
-                  }),
-                ),
-                TextFormField(
-                  initialValue: basicSalary,
-                  decoration: InputDecoration(labelText: 'Lương cơ bản'),
-                  validator: (value) => value!.isEmpty ? 'Vui lòng nhập lương cơ bản' : null,
-                  onChanged: (value) => basicSalary = value,
-                ),
-                TextFormField(
-                  initialValue: status,
-                  decoration: InputDecoration(labelText: 'Trạng thái'),
-                  validator: (value) => value!.isEmpty ? 'Vui lòng nhập trạng thái' : null,
-                  onChanged: (value) => status = value,
-                ),
-                TextFormField(
-                  initialValue: notes,
-                  decoration: InputDecoration(labelText: 'Ghi chú'),
-                  onChanged: (value) => notes = value,
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  final newContract = Contract(
-                    id: contractId,
-                    employeeId: employeeId,
-                    type: contractType,
-                    startDate: DateFormat('yyyy-MM-dd').format(startDate!),
-                    endDate: DateFormat('yyyy-MM-dd').format(endDate!),
-                    basicSalary: basicSalary,
-                    status: status,
-                    notes: notes,
-                  );
-                  if (contract != null) {
-                    _editContract(index!, newContract);
-                  } else {
-                    _addContract(newContract);
-                  }
-                  Navigator.of(context).pop();
-                }
-              },
-              child: Text(contract != null ? 'Cập nhật' : 'Thêm'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Hủy'),
-            ),
-          ],
-        );
-      },
-    );
+  Future<List<HopDong>> _fetchAttendanceByNhanVien(int nhanVienId) async {
+  final url = Uri.parse('http://192.168.239.219:5000/api/HopDongs/NhanVien/$nhanVienId');
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    final List data = jsonDecode(response.body);
+    return data.map((item) => HopDong.fromJson(item)).toList();
+  } else {
+    throw Exception('Không thể lấy dữ liệu hợp đồng');
+  }
+}
+
+
+
+  // Hàm hỗ trợ để định dạng ngày
+  String formatDate(DateTime? date) {
+    return date != null ? DateFormat('dd/MM/yyyy HH:mm').format(date) : '--';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Quản Lý Hợp Đồng'),
-        backgroundColor: Colors.orange,
+        title: Text('Hợp đồng của tôi'),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [const Color.fromARGB(255, 254, 242, 225), Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      body: loggedInNhanVienID == null
+        ? Center(child: CircularProgressIndicator())  // Hiển thị khi chưa lấy được NhanVienID
+        : FutureBuilder<List<HopDong>>(
+            future: _attendanceList,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Lỗi khi lấy dữ liệu'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(child: Text('Không có dữ liệu hợp đồng'));
+              } else {
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    final attendance = snapshot.data![index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: ListTile(
+                        title: Text('Tên hợp đồng: ${attendance.tenHopDong}'),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Mã nhân viên: ${attendance.nhanVienId}'),
+                      Text('Lương cơ bản: ${attendance.luongCoBan}'),
+                      Text('Ghi chú: ${attendance.ghiChu ?? 'Không có ghi chú'}'),
+                      Text('Ngày bắt đầu: ${attendance.ngayBatDau.toLocal().toString().split(' ')[0]}'),
+                      Text('Ngày kết thúc: ${attendance.ngayKetThuc?.toLocal().toString().split(' ')[0]?? 'Không rõ'}'),
+                      Text('Trạng thái: ${attendance.trangThai}'),
+                            
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }
+            },
           ),
-        ),
-        child: ListView.builder(
-          itemCount: contracts.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              title: Text(contracts[index].name),
-              subtitle: Text('Loại: ${contracts[index].type}, Ngày bắt đầu: ${contracts[index].startDate}, Ngày kết thúc: ${contracts[index].endDate}'),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () => _showContractDialog(contract: contracts[index], index: index),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text('Xác Nhận'),
-                            content: Text('Bạn có chắc chắn muốn xóa hợp đồng này không?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  _deleteContract(index);
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('Có'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('Không'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showContractDialog(),
-        child: Icon(Icons.add),
-        backgroundColor: Colors.orange,
-      ),
     );
   }
-}
-
-class Contract {
-  final String id;
-  final String employeeId;
-  final String type;
-  final String startDate;
-  final String endDate;
-  final String basicSalary;
-  final String status;
-  final String notes;
-
-  Contract({
-    required this.id,
-    required this.employeeId,
-    required this.type,
-    required this.startDate,
-    required this.endDate,
-    required this.basicSalary,
-    required this.status,
-    required this.notes,
-  });
-
-  String get name => 'Hợp đồng $id'; // Tạo thuộc tính tên dựa trên ID
 }

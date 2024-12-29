@@ -9,7 +9,7 @@ class HRScreenHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quản lý Nhân Sự'),
+        title: const Text('Nhân Sự'),
         backgroundColor: Colors.blueAccent, // Màu của AppBar
       ),
       body: Padding(
@@ -21,7 +21,7 @@ class HRScreenHome extends StatelessWidget {
           children: [
             _buildOptionCard(
               context,
-              "Quản lý phòng ban",
+              "Phòng ban",
               Icons.apartment,
               Colors.blue,
               () {
@@ -34,27 +34,27 @@ class HRScreenHome extends StatelessWidget {
             ),
             _buildOptionCard(
               context,
-              "Quản lý nhân viên",
+              "Nhân viên",
               Icons.person,
               Colors.green,
               () {
                 // Điều hướng đến trang quản lý nhân viên
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EmployeeManagementScreen()), // Không cần const ở đây
+                  MaterialPageRoute(builder: (context) => ListNhanVienScreen()), // Không cần const ở đây
                 );
               },
             ),
             _buildOptionCard(
               context,
-              "Quản lý hợp đồng",
+              "Hợp đồng",
               Icons.assignment,
               Colors.orange,
               () {
                 // Điều hướng đến trang quản lý hợp đồng
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ContractManagementScreen()), // Không cần const ở đây
+                  MaterialPageRoute(builder: (context) => ListHopDongScreen()), // Không cần const ở đây
                 );
               },
             ),

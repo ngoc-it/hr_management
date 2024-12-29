@@ -1,14 +1,21 @@
 import 'dart:async'; // Import thư viện để sử dụng Timer
+import 'dart:convert';
 import "package:flutter/material.dart";
-import 'package:flutter_application_1/view/ChamCong/timekeeping_creen.dart';
+import 'package:flutter_application_1/components/nav_bar.dart';
+import 'package:flutter_application_1/view/ChamCong/List_ChamCong.dart';
 import 'package:flutter_application_1/view/TinhLuong/salary_calculation_screen.dart';
 import 'package:flutter_application_1/view/XepCa/xepca_nhanvien.dart';
+import 'package:flutter_application_1/view/CongViecPhanCong/assign_work.dart';
 import 'package:flutter_application_1/view/login_screen.dart';
 import 'package:flutter_application_1/view/NhanSu/hr_screen_home.dart';
 import 'package:flutter_application_1/view/worker_details_screen.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:flutter_application_1/view/PhanCong/Assignment_screen.dart';
+import 'package:flutter_application_1/view/view_screen.dart';
 import 'package:intl/intl.dart'; // Import thư viện để định dạng ngày
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,9 +28,77 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<String> weekDays = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
   DateTime today = DateTime.now();
   late List<Map<String, String>> days;
-
+String userRole ='';
   String currentTime = ''; // Biến lưu trữ giờ hiện tại
   Timer? timer; // Khai báo Timer
+  // Hàm kiểm tra xem người dùng đã đăng nhập chưa
+  Future<bool> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isLoggedIn') ?? false; // Kiểm tra giá trị trong SharedPreferences
+  }
+
+  Future<String?> _getUserRole() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('auth_token'); // Lấy vai trò từ SharedPreferences
+}
+
+  // Hàm đăng xuất
+  
+ Future<void> _logout(BuildContext context) async {
+  final prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('auth_token'); // Sử dụng đúng key
+
+  if (token == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Không tìm thấy token!')),
+    );
+    return;
+  }
+
+  final url = Uri.parse('http://192.168.239.219:5000/api/LoginLogout/logout');
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', // Truyền token lấy từ SharedPreferences
+      },
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đăng xuất thành công!')),
+      );
+
+      // Xóa token và trạng thái đăng nhập
+      await prefs.remove('auth_token'); // Xóa đúng key
+      await prefs.remove('isLoggedIn');
+
+      // Chuyển hướng về trang Login
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    } else {
+      String errorMessage = 'Đã có lỗi khi đăng xuất.';
+      if (response.body.isNotEmpty) {
+        final errorResponse = jsonDecode(response.body);
+        errorMessage = errorResponse['title'] ?? errorMessage;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Không thể kết nối đến máy chủ.')),
+    );
+  }
+}
+
+
+
 
   @override
   void initState() {
@@ -31,8 +106,14 @@ class _HomeScreenState extends State<HomeScreen> {
     days = getDaysOfWeek();
     updateTime();
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => updateTime());
+    _loadUserRole();
   }
-
+Future<void> _loadUserRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userRole = prefs.getString('UserRole') ?? '';
+    });
+  }
   // Tạo danh sách chứa các ngày trong tuần, bắt đầu từ ngày hôm nay
   List<Map<String, String>> getDaysOfWeek() {
     List<Map<String, String>> days = [];
@@ -43,6 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     return days;
   }
+  
 
   // Hàm cập nhật giờ hiện tại
   void updateTime() {
@@ -61,17 +143,28 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
+       drawer: userRole == 'Nhân Viên' ? null: Navbar(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Builder(
+                      builder: (context) => IconButton(
+                        icon: Icon(Icons.menu),
+                        onPressed: () {
+                          Scaffold.of(context).openDrawer();
+                        },
+                      ),
+                    ),
+
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -92,26 +185,45 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoginScreen()),
-                        );
-                      },
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.blueAccent,
-                          image: DecorationImage(
-                            image: AssetImage("assets/user1.jpg"),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+            onTap: () {
+              // Hiển thị hộp thoại xác nhận đăng xuất
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text("Đăng xuất"),
+                    content: Text("Bạn có chắc chắn muốn đăng xuất?"),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Đóng hộp thoại
+                        },
+                        child: Text("Hủy"),
                       ),
-                    ),
+                      TextButton(
+                        onPressed: () {
+                          _logout(context); // Gọi API đăng xuất
+                        },
+                        child: Text("Đăng xuất"),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.blueAccent,
+                image: DecorationImage(
+                  image: AssetImage("assets/user1.jpg"), // Thay đổi đường dẫn ảnh nếu cần
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
                   ],
                 ),
               ),
@@ -234,11 +346,35 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => const TimekeepingScreen()),
+              builder: (context) =>  ListChamCongScreen()),
         );
       },
     ),
     departmentCard(
+      "Phân công",
+      Colors.pinkAccent,
+      "📝", // Icon cho phân công
+      () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CongViecDuocPhanCongScreen()),
+        );
+      },
+    ),
+    departmentCard(
+      "Tính lương",
+      Colors.redAccent,
+      "💰", // Icon cho tính lương
+      () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ListTinhLuongScreen()),
+        );
+      },
+    ),
+     departmentCard(
       "Xếp ca",
       Colors.orangeAccent,
       "📅", // Icon cho xếp ca
@@ -251,39 +387,15 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     ),
     departmentCard(
-      "Tính lương",
-      Colors.redAccent,
-      "💰", // Icon cho tính lương
-      () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const SalaryCalculationScreen()),
-        );
-      },
-    ),
-    departmentCard(
-      "Phân công",
-      Colors.pinkAccent,
-      "📝", // Icon cho phân công
-      () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => AssignWorkPage()),
-        );
-      },
-    ),
-    departmentCard(
       "Tiến độ dự án",
       Colors.yellowAccent,
       "📈", // Icon cho tiến độ dự án
       () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const HRScreenHome()),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //       builder: (context) => const HRScreenHome()),
+        // );
       },
     ),
   ],
@@ -306,7 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ShiftSelectionScreen(), // Chuyển hướng tới WorkerDetailsScreen
+            builder: (context) => AttendancePage(), // Chuyển hướng tới WorkerDetailsScreen
           ),
         );
       },
